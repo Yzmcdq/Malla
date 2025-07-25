@@ -2,31 +2,32 @@
 document.addEventListener('DOMContentLoaded', function() {
     
     // --- Mensajes de felicitación ---
-    const semesterMessages = [
-        "¡Semestre superado! Un paso más cerca de la meta. ¡Excelente trabajo!",
-        "¡Felicidades! Has conquistado este semestre con dedicación y esfuerzo.",
-        "¡Lo lograste! Cada ramo aprobado es un pilar de tu futuro profesional.",
-        "¡Impresionante! Tu constancia te ha llevado a superar este desafío.",
-        "¡Adelante! Este semestre es historia. Prepárate para lo que viene.",
-        "¡Bien hecho! La justicia y el derecho están un paso más cerca.",
-        "¡Misión cumplida! Has demostrado tu capacidad y compromiso.",
-        "¡Un semestre menos! Sigue cultivando tu mente y tu vocación.",
-        "¡Victoria! El conocimiento es tu mejor argumento. Sigue así.",
-        "¡Excelente! Tu esfuerzo de hoy es el éxito de mañana."
-    ];
+const semesterMessages = [
+    "¡Mi vida hermosa, superaste este semestre con todo tu brillo! Estoy tan orgulloso de ti, amor mío.",
+    "¡Felicidades, mi preciosa! Con tu esfuerzo y dulzura conquistaste este semestre.",
+    "¡Lo lograste, mi niña hermosa! Cada ramo aprobado es un paso más para el futuro que sueñas.",
+    "¡Amor mío, impresionante! Tu constancia y amor por lo que haces brillaron este semestre.",
+    "¡Adelante, belleza! Este semestre quedó atrás y tú sigues conquistando el mundo.",
+    "¡Bien hecho, preciosa! Estás cada día más cerca de cumplir tus sueños.",
+    "¡Misión cumplida, mi amor! Has demostrado tu fuerza y tu luz una vez más.",
+    "¡Un semestre menos, mi vida! Sigue brillando con esa pasión que me enamora.",
+    "¡Victoria, mi niña hermosa! Tu dedicación es tu mejor superpoder.",
+    "¡Excelente, amor mío! Tu esfuerzo hoy es la semilla del éxito de mañana."
+];
 
-    const yearMessages = [
-        "¡Un año menos! Tu perseverancia es admirable. ¡A por el siguiente!",
-        "¡Increíble! Has completado un año entero. ¡Estás imparable!",
-        "¡Felicitaciones por este gran hito! Un año de crecimiento y aprendizaje.",
-        "¡Dominaste el año! Tu dedicación te distingue. ¡Celebra este logro!",
-        "¡Año completado! Estás forjando un camino de excelencia en el derecho.",
-        "¡Qué gran avance! Has superado un año de desafíos. ¡El futuro es tuyo!",
-        "¡Felicidades, futuro colega! Un año más de experiencia y sabiduría.",
-        "¡Un brindis por ti! Has cerrado un capítulo importante de tu carrera.",
-        "¡Lo has vuelto a hacer! Un año completo de éxito. ¡Sigue brillando!",
-        "¡La toga está un año más cerca! Sigue con esa pasión y determinación."
-    ];
+const yearMessages = [
+    "¡Mi vida, un año menos! Tu perseverancia me inspira cada día. ¡Vamos por el siguiente, amor mío!",
+    "¡Increíble, mi preciosa! Completaste un año entero con esa fuerza que amo en ti.",
+    "¡Felicidades, mi niña hermosa! Este año fue de crecimiento, amor y sueños cumplidos.",
+    "¡Dominaste el año, belleza mía! Tu dedicación te hace única. ¡Celebremos este logro!",
+    "¡Año completado, amor mío! Estás construyendo el futuro con esa luz que te rodea.",
+    "¡Qué gran avance, preciosa! Has superado un año de desafíos y brillas aún más.",
+    "¡Felicidades, mi vida! Un año más de aprendizajes que te acercan a tus sueños.",
+    "¡Un brindis por ti, amor mío! Cerraste este capítulo con fuerza y amor.",
+    "¡Lo hiciste otra vez, mi niña hermosa! Un año completo de logros y esfuerzo.",
+    "¡Amor mío, la toga está un año más cerca! Con tu pasión y dulzura, todo lo puedes lograr."
+];
+
 
     const ramos = document.querySelectorAll('.ramo');
     
