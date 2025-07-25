@@ -36,18 +36,6 @@ document.addEventListener('DOMContentLoaded', function() {
         ramo.addEventListener('click', function() {
             toggleRamoCompletion(this);
         });
-        
-        ramo.addEventListener('mouseenter', function() {
-            if (!this.classList.contains('completado')) {
-                this.style.transform = 'translateY(-3px) scale(1.02)';
-            }
-        });
-        
-        ramo.addEventListener('mouseleave', function() {
-            if (!this.classList.contains('completado')) {
-                this.style.transform = 'translateY(0) scale(1)';
-            }
-        });
     });
     
     function toggleRamoCompletion(ramoElement) {
@@ -56,55 +44,54 @@ document.addEventListener('DOMContentLoaded', function() {
         if (wasCompleted) {
             ramoElement.classList.remove('completado');
             removeCompletedRamo(ramoElement.dataset.ramo);
+            // Marcar el semestre como no completado si se desmarca un ramo
             ramoElement.closest('.column').dataset.completed = 'false';
         } else {
             ramoElement.classList.add('completado');
             saveCompletedRamo(ramoElement.dataset.ramo);
-            
-            ramoElement.style.transform = 'scale(1.1)';
-            setTimeout(() => ramoElement.style.transform = 'scale(1)', 200);
-            
-            // --- NEW: Lógica de hitos mejorada ---
             checkCompletionStatus(ramoElement);
         }
-        
-        updateStats();
     }
 
-    // --- NEW: Lógica de verificación de hitos corregida ---
     function checkCompletionStatus(ramoElement) {
         const semesterColumn = ramoElement.closest('.column');
-        if (!semesterColumn || semesterColumn.dataset.completed === 'true') {
+        // Salir si la columna ya fue celebrada en esta sesión
+        if (!semesterColumn || semesterColumn.dataset.celebrated === 'true') {
             return;
         }
 
         const allRamosInSemester = semesterColumn.querySelectorAll('.ramo');
         const completedRamosInSemester = semesterColumn.querySelectorAll('.ramo.completado');
 
+        // Si no se han completado todos los ramos del semestre, no hacer nada
         if (allRamosInSemester.length === 0 || allRamosInSemester.length !== completedRamosInSemester.length) {
-            return; // No se ha completado el semestre actual
+            return;
         }
 
-        // Marcar semestre como completado para no repetir la notificación
-        semesterColumn.dataset.completed = 'true';
+        // Marcar como celebrado para no repetir la animación en la misma sesión
+        semesterColumn.dataset.celebrated = 'true';
         const semesterIndex = parseInt(semesterColumn.dataset.semesterIndex, 10);
 
-        // Si es un semestre par (el segundo del año), verificar si el año está completo
-        if (semesterIndex % 2 !== 0) { // Índices 1, 3, 5, 7, 9
-            const partnerSemesterIndex = semesterIndex - 1;
-            const partnerSemesterColumn = document.querySelector(`.column[data-semester-index="${partnerSemesterIndex}"]`);
-            // Se asume que el semestre anterior ya debe estar completado para llegar aquí
-            if (partnerSemesterColumn && partnerSemesterColumn.querySelectorAll('.ramo.completado').length === partnerSemesterColumn.querySelectorAll('.ramo').length) {
+        // Lógica corregida para mostrar el mensaje correcto
+        // Si el índice es IMPAR, es el segundo semestre de un año.
+        if (semesterIndex % 2 !== 0) {
+            const partnerSemesterColumn = document.querySelector(`.column[data-semester-index="${semesterIndex - 1}"]`);
+            const partnerRamos = partnerSemesterColumn.querySelectorAll('.ramo');
+            const partnerCompletedRamos = partnerSemesterColumn.querySelectorAll('.ramo.completado');
+            
+            // Si el semestre par también está completo, se completó el AÑO.
+            if (partnerRamos.length === partnerCompletedRamos.length) {
                 const yearMessage = yearMessages[Math.floor(Math.random() * yearMessages.length)];
                 showMilestoneNotification('¡Año Completado!', yearMessage, 'year');
             }
-        } else { // Si es un semestre impar (el primero del año), mostrar mensaje de semestre
+        } 
+        // Si el índice es PAR, es el primer semestre de un año.
+        else {
             const randomMessage = semesterMessages[Math.floor(Math.random() * semesterMessages.length)];
             showMilestoneNotification('¡Semestre Superado!', randomMessage, 'semester');
         }
     }
 
-    // --- NEW: Función para mostrar modal de felicitación ---
     function showMilestoneNotification(title, message, type) {
         const overlay = document.createElement('div');
         overlay.className = 'milestone-overlay';
@@ -113,62 +100,77 @@ document.addEventListener('DOMContentLoaded', function() {
         modal.className = `milestone-modal ${type}`;
         
         modal.innerHTML = `
+            <div class="effects-container"></div>
             <h3>${title}</h3>
             <p>${message}</p>
-            <button class="close-button">Cerrar</button>
-            <div class="confetti-container"></div>
-            <div class="firework-container"></div>
+            <button class="close-button">¡Continuar!</button>
         `;
 
         overlay.appendChild(modal);
         document.body.appendChild(overlay);
 
-        // Activar efectos
-        launchFireworks(modal.querySelector('.firework-container'));
-        launchConfetti(modal.querySelector('.confetti-container'));
+        // Activar efectos visuales
+        const effectsContainer = modal.querySelector('.effects-container');
+        launchFireworks(effectsContainer);
+        launchConfetti(effectsContainer);
 
         const close = () => {
             overlay.style.animation = 'fadeOut 0.3s forwards';
-            overlay.addEventListener('animationend', () => overlay.remove());
+            overlay.addEventListener('animationend', () => overlay.remove(), { once: true });
         };
 
         modal.querySelector('.close-button').onclick = close;
-        overlay.onclick = (e) => {
+        overlay.addEventListener('click', (e) => {
             if (e.target === overlay) {
                 close();
             }
-        };
+        });
     }
     
-    // --- NEW: Funciones para efectos visuales ---
     function launchFireworks(container) {
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 8; i++) {
             setTimeout(() => {
                 const firework = document.createElement('div');
-                firework.className = 'firework';
-                const x = Math.random() * 80 + 10; // %
-                const y = Math.random() * 50 + 20; // %
+                firework.className = 'particle firework';
+                const x = Math.random() * 80 + 10;
+                const y = Math.random() * 50 + 20;
                 const color = `hsl(${Math.random() * 360}, 100%, 70%)`;
                 firework.style.left = `${x}%`;
                 firework.style.top = `${y}%`;
-                firework.style.boxShadow = `0 0 10px ${color}, 0 0 20px ${color}`;
+                firework.style.backgroundColor = color;
+                
+                const beforeStyle = document.createElement('style');
+                const randomId = `fw-${Math.random().toString(36).substr(2, 9)}`;
+                firework.id = randomId;
+                beforeStyle.innerHTML = `
+                    #${randomId}::before {
+                        box-shadow: 0 0 15px 5px ${color}, 0 0 0 10px ${color}22;
+                    }
+                `;
+                document.head.appendChild(beforeStyle);
+                
                 container.appendChild(firework);
-                firework.addEventListener('animationend', () => firework.remove());
-            }, Math.random() * 800);
+
+                firework.addEventListener('animationend', () => {
+                    firework.remove();
+                    beforeStyle.remove();
+                }, { once: true });
+            }, Math.random() * 1000);
         }
     }
 
     function launchConfetti(container) {
-        const colors = ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4caf50', '#8bc34a', '#cddc39', '#ffeb3b', '#ffc107', '#ff9800', '#ff5722'];
-        for (let i = 0; i < 100; i++) {
+        const colors = ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4caf50', '#ffeb3b', '#ffc107', '#ff9800'];
+        for (let i = 0; i < 150; i++) {
             const confetti = document.createElement('div');
-            confetti.className = 'confetti';
+            confetti.className = 'particle confetti';
             confetti.style.left = `${Math.random() * 100}%`;
             confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-            confetti.style.animationDelay = `${Math.random() * 2}s`;
-            confetti.style.animationDuration = `${Math.random() * 3 + 2}s`;
+            confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+            confetti.style.animationDelay = `${Math.random() * 0.5}s`;
+            confetti.style.animationDuration = `${Math.random() * 2 + 3}s`;
             container.appendChild(confetti);
-            confetti.addEventListener('animationend', () => confetti.remove());
+            confetti.addEventListener('animationend', () => confetti.remove(), { once: true });
         }
     }
 
@@ -193,19 +195,5 @@ document.addEventListener('DOMContentLoaded', function() {
                 ramoElement.classList.add('completado');
             }
         });
-
-        document.querySelectorAll('.column').forEach(column => {
-            const allRamos = column.querySelectorAll('.ramo');
-            if (allRamos.length > 0 && allRamos.length === column.querySelectorAll('.ramo.completado').length) {
-                column.dataset.completed = 'true';
-            }
-        });
     }
-    
-    function updateStats() {
-        // Esta función podría mostrar el progreso general si se desea, por ahora está vacía.
-    }
-    
-    // Inicializar al cargar la página
-    updateStats();
-});
+})();
