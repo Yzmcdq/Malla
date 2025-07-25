@@ -1,7 +1,7 @@
 // --- JavaScript from script.js ---
 document.addEventListener('DOMContentLoaded', function() {
     
-    // --- NEW: Mensajes de felicitación ---
+    // --- Mensajes de felicitación ---
     const semesterMessages = [
         "¡Semestre superado! Un paso más cerca de la meta. ¡Excelente trabajo!",
         "¡Felicidades! Has conquistado este semestre con dedicación y esfuerzo.",
@@ -28,13 +28,10 @@ document.addEventListener('DOMContentLoaded', function() {
         "¡La toga está un año más cerca! Sigue con esa pasión y determinación."
     ];
 
-    // Obtener todos los elementos de ramos
     const ramos = document.querySelectorAll('.ramo');
     
-    // Cargar estado guardado desde localStorage
     loadCompletedRamos();
     
-    // Agregar event listener a cada ramo
     ramos.forEach(ramo => {
         ramo.addEventListener('click', function() {
             toggleRamoCompletion(this);
@@ -53,97 +50,128 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Función para alternar el estado de completado de un ramo
     function toggleRamoCompletion(ramoElement) {
-        const ramoId = ramoElement.getAttribute('data-ramo');
+        const wasCompleted = ramoElement.classList.contains('completado');
         
-        if (ramoElement.classList.contains('completado')) {
-            // Si está completado, quitarlo
+        if (wasCompleted) {
             ramoElement.classList.remove('completado');
-            removeCompletedRamo(ramoId);
-            ramoElement.closest('.column').dataset.completed = 'false'; // Marcar semestre como no completado
+            removeCompletedRamo(ramoElement.dataset.ramo);
+            ramoElement.closest('.column').dataset.completed = 'false';
         } else {
-            // Si no está completado, marcarlo como completado
             ramoElement.classList.add('completado');
-            saveCompletedRamo(ramoId);
+            saveCompletedRamo(ramoElement.dataset.ramo);
             
-            // Animación y efectos
             ramoElement.style.transform = 'scale(1.1)';
-            setTimeout(() => {
-                ramoElement.style.transform = 'scale(1)';
-            }, 200);
-            createConfettiEffect(ramoElement);
+            setTimeout(() => ramoElement.style.transform = 'scale(1)', 200);
             
-            // --- NEW: Verificar si se completó un hito (semestre/año) ---
+            // --- NEW: Lógica de hitos mejorada ---
             checkCompletionStatus(ramoElement);
         }
         
-        // Actualizar estadísticas de progreso general
         updateStats();
     }
 
-    // --- NEW: Función para verificar hitos de compleción ---
+    // --- NEW: Lógica de verificación de hitos corregida ---
     function checkCompletionStatus(ramoElement) {
         const semesterColumn = ramoElement.closest('.column');
         if (!semesterColumn || semesterColumn.dataset.completed === 'true') {
-            return; // Salir si no hay columna o el semestre ya fue marcado como completado
+            return;
         }
 
         const allRamosInSemester = semesterColumn.querySelectorAll('.ramo');
         const completedRamosInSemester = semesterColumn.querySelectorAll('.ramo.completado');
 
-        // Verificar si se completó el SEMESTRE
-        if (allRamosInSemester.length > 0 && allRamosInSemester.length === completedRamosInSemester.length) {
-            semesterColumn.dataset.completed = 'true'; // Marcar para no repetir notificación
-            const randomMessage = semesterMessages[Math.floor(Math.random() * semesterMessages.length)];
-            showMilestoneNotification(randomMessage, 'semester');
+        if (allRamosInSemester.length === 0 || allRamosInSemester.length !== completedRamosInSemester.length) {
+            return; // No se ha completado el semestre actual
+        }
 
-            // Después de completar un semestre, verificar si se completó el AÑO
-            const semesterIndex = parseInt(semesterColumn.dataset.semesterIndex, 10);
-            let partnerSemesterIndex;
+        // Marcar semestre como completado para no repetir la notificación
+        semesterColumn.dataset.completed = 'true';
+        const semesterIndex = parseInt(semesterColumn.dataset.semesterIndex, 10);
 
-            // Determinar el índice del semestre par
-            if (semesterIndex % 2 === 0) { // Si es 0, 2, 4...
-                partnerSemesterIndex = semesterIndex + 1;
-            } else { // Si es 1, 3, 5...
-                partnerSemesterIndex = semesterIndex - 1;
-            }
-
+        // Si es un semestre par (el segundo del año), verificar si el año está completo
+        if (semesterIndex % 2 !== 0) { // Índices 1, 3, 5, 7, 9
+            const partnerSemesterIndex = semesterIndex - 1;
             const partnerSemesterColumn = document.querySelector(`.column[data-semester-index="${partnerSemesterIndex}"]`);
-            if (partnerSemesterColumn && partnerSemesterColumn.dataset.completed === 'true') {
+            // Se asume que el semestre anterior ya debe estar completado para llegar aquí
+            if (partnerSemesterColumn && partnerSemesterColumn.querySelectorAll('.ramo.completado').length === partnerSemesterColumn.querySelectorAll('.ramo').length) {
                 const yearMessage = yearMessages[Math.floor(Math.random() * yearMessages.length)];
-                showMilestoneNotification(yearMessage, 'year');
+                showMilestoneNotification('¡Año Completado!', yearMessage, 'year');
             }
+        } else { // Si es un semestre impar (el primero del año), mostrar mensaje de semestre
+            const randomMessage = semesterMessages[Math.floor(Math.random() * semesterMessages.length)];
+            showMilestoneNotification('¡Semestre Superado!', randomMessage, 'semester');
         }
     }
 
-    // --- NEW: Función para mostrar notificaciones de hitos ---
-    function showMilestoneNotification(message, type) {
-        const notification = document.createElement('div');
-        notification.className = `milestone-notification ${type}`;
-        notification.textContent = message;
+    // --- NEW: Función para mostrar modal de felicitación ---
+    function showMilestoneNotification(title, message, type) {
+        const overlay = document.createElement('div');
+        overlay.className = 'milestone-overlay';
         
-        document.body.appendChild(notification);
+        const modal = document.createElement('div');
+        modal.className = `milestone-modal ${type}`;
         
-        // La animación de salida es manejada por CSS, pero removemos el elemento del DOM después
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.remove();
+        modal.innerHTML = `
+            <h3>${title}</h3>
+            <p>${message}</p>
+            <button class="close-button">Cerrar</button>
+            <div class="confetti-container"></div>
+            <div class="firework-container"></div>
+        `;
+
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+
+        // Activar efectos
+        launchFireworks(modal.querySelector('.firework-container'));
+        launchConfetti(modal.querySelector('.confetti-container'));
+
+        const close = () => {
+            overlay.style.animation = 'fadeOut 0.3s forwards';
+            overlay.addEventListener('animationend', () => overlay.remove());
+        };
+
+        modal.querySelector('.close-button').onclick = close;
+        overlay.onclick = (e) => {
+            if (e.target === overlay) {
+                close();
             }
-        }, 5000);
+        };
     }
     
-    function createConfettiEffect(element) {
-        const rect = element.getBoundingClientRect();
-        for (let i = 0; i < 15; i++) {
-            createConfettiParticle(rect.left + rect.width / 2, rect.top + rect.height / 2);
+    // --- NEW: Funciones para efectos visuales ---
+    function launchFireworks(container) {
+        for (let i = 0; i < 5; i++) {
+            setTimeout(() => {
+                const firework = document.createElement('div');
+                firework.className = 'firework';
+                const x = Math.random() * 80 + 10; // %
+                const y = Math.random() * 50 + 20; // %
+                const color = `hsl(${Math.random() * 360}, 100%, 70%)`;
+                firework.style.left = `${x}%`;
+                firework.style.top = `${y}%`;
+                firework.style.boxShadow = `0 0 10px ${color}, 0 0 20px ${color}`;
+                container.appendChild(firework);
+                firework.addEventListener('animationend', () => firework.remove());
+            }, Math.random() * 800);
         }
     }
-    
-    function createConfettiParticle(x, y) {
-        // ... (código de partículas sin cambios)
+
+    function launchConfetti(container) {
+        const colors = ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4caf50', '#8bc34a', '#cddc39', '#ffeb3b', '#ffc107', '#ff9800', '#ff5722'];
+        for (let i = 0; i < 100; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = `${Math.random() * 100}%`;
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.animationDelay = `${Math.random() * 2}s`;
+            confetti.style.animationDuration = `${Math.random() * 3 + 2}s`;
+            container.appendChild(confetti);
+            confetti.addEventListener('animationend', () => confetti.remove());
+        }
     }
-    
+
     function saveCompletedRamo(ramoId) {
         let completedRamos = JSON.parse(localStorage.getItem('completedRamosDerecho') || '[]');
         if (!completedRamos.includes(ramoId)) {
@@ -154,8 +182,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function removeCompletedRamo(ramoId) {
         let completedRamos = JSON.parse(localStorage.getItem('completedRamosDerecho') || '[]');
-        completedRamos = completedRamos.filter(id => id !== ramoId);
-        localStorage.setItem('completedRamosDerecho', JSON.stringify(completedRamos));
+        localStorage.setItem('completedRamosDerecho', JSON.stringify(completedRamos.filter(id => id !== ramoId)));
     }
     
     function loadCompletedRamos() {
@@ -167,25 +194,18 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // --- NEW: Marcar semestres ya completados al cargar para evitar notificaciones ---
         document.querySelectorAll('.column').forEach(column => {
             const allRamos = column.querySelectorAll('.ramo');
-            if (allRamos.length === 0) return; // Ignorar columnas vacías
-            const completedRamos = column.querySelectorAll('.ramo.completado');
-            if (allRamos.length === completedRamos.length) {
+            if (allRamos.length > 0 && allRamos.length === column.querySelectorAll('.ramo.completado').length) {
                 column.dataset.completed = 'true';
             }
         });
     }
     
     function updateStats() {
-        // ... (código de estadísticas sin cambios)
+        // Esta función podría mostrar el progreso general si se desea, por ahora está vacía.
     }
     
-    function showProgressNotification(completed, total, percentage) {
-        // ... (código de notificación de progreso sin cambios)
-    }
-    
-    // Inicializar estadísticas al cargar
+    // Inicializar al cargar la página
     updateStats();
 });
