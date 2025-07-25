@@ -1,0 +1,188 @@
+/* --- CSS From style.css --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.4;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* --- MODIFIED: Header size reduced --- */
+header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 10px 0 15px 0;
+    border-bottom: 2px solid #a67c00; /* New color for Law theme */
+}
+
+header h1 {
+    font-size: 2.2em;
+    color: #a67c00; /* New color */
+    margin-bottom: 5px;
+}
+
+header h2 {
+    font-size: 1.7em;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+/* --- MODIFIED: Wrapper for horizontal scrolling with scrollbar on top --- */
+.malla-scroll-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    margin: 0 -20px; /* Extend to edges to hide horizontal scrollbar nicely */
+    padding: 0 20px 0 20px;
+    transform: rotateX(180deg); /* Flips the container to move scrollbar to top */
+}
+
+/* --- MODIFIED: Inner container to un-flip the content --- */
+.malla-content {
+    min-width: 1200px;
+    padding-top: 10px; /* Space for the scrollbar */
+    transform: rotateX(180deg); /* Flips the content back to normal */
+}
+
+.timeline {
+    display: flex;
+    background-color: #a67c00; /* New color */
+    color: white;
+    padding: 10px 0; /* Adjusted padding */
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.year {
+    text-align: center;
+    flex-basis: 0; /* Needed for flex-grow to work properly */
+    padding: 5px;
+    border-right: 1px solid rgba(255, 255, 255, 0.3); /* Separator line */
+    flex-grow: 2; /* Each year spans 2 columns */
+}
+
+.year:last-child {
+    border-right: none; /* Remove border from the last item */
+}
+
+.year-label {
+    display: block;
+    font-weight: bold;
+    font-size: 1.1em;
+    margin-bottom: 8px;
+}
+
+.semesters {
+    display: flex;
+    justify-content: space-around;
+    gap: 5px;
+}
+
+.semester {
+    font-size: 0.9em;
+    background-color: rgba(255,255,255,0.2);
+    padding: 4px 8px;
+    border-radius: 4px;
+    flex: 1; /* Make semesters take equal space within their year */
+}
+
+/* --- MODIFIED: Grid for 10 semesters --- */
+.malla-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 15px;
+    min-height: 600px;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.ramo {
+    background-color: #fdf8e8; /* New color */
+    border: 2px solid #a67c00; /* New color */
+    border-radius: 8px;
+    padding: 12px 8px;
+    text-align: center;
+    font-size: 0.85em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    word-wrap: break-word;
+    hyphens: auto;
+}
+
+.ramo:hover {
+    background-color: #f3eac8; /* New color */
+    border-color: #8c6900; /* New color */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.ramo.completado {
+    background-color: #d4edda;
+    border-color: #28a745;
+    color: #155724;
+    position: relative;
+}
+
+.ramo.completado::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 45%, #28a745 45%, #28a745 55%, transparent 55%);
+    pointer-events: none;
+    border-radius: 6px;
+}
+
+.ramo.completado::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(-45deg, transparent 45%, #28a745 45%, #28a745 55%, transparent 55%);
+    pointer-events: none;
+    border-radius: 6px;
+}
+
+footer {
+    margin-top: 40px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.notas p {
+    margin-bottom: 8px;
+    font-size: 0.9em;
+    line-height: 1.6;
+}
+
+.notas strong {
+    color: #a67c00; /* New color */
+}
