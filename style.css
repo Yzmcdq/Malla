@@ -175,20 +175,22 @@ footer {
     color: #a67c00;
 }
 
-/* --- NEW: Estilos para Modal de Felicitación --- */
+/* --- Estilos para Modal de Felicitación --- */
 .milestone-overlay {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.7);
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.75);
     z-index: 1000;
     display: flex;
     justify-content: center;
     align-items: center;
     opacity: 0;
     animation: fadeIn 0.3s forwards;
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
 }
 
 .milestone-modal {
@@ -199,16 +201,18 @@ footer {
     position: relative;
     transform: scale(0.7);
     animation: zoomIn 0.5s 0.2s forwards cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    max-width: 90%;
+    width: 550px;
 }
 
 .milestone-modal.semester {
     background: linear-gradient(145deg, #007bff, #0056b3);
-    box-shadow: 0 10px 30px rgba(0, 123, 255, 0.5);
+    box-shadow: 0 10px 30px rgba(0, 123, 255, 0.5), 0 0 0 10px rgba(255,255,255,0.1);
 }
 
 .milestone-modal.year {
     background: linear-gradient(145deg, #ffc107, #d39e00);
-    box-shadow: 0 10px 30px rgba(255, 193, 7, 0.5);
+    box-shadow: 0 10px 30px rgba(255, 193, 7, 0.5), 0 0 0 10px rgba(255,255,255,0.1);
 }
 
 .milestone-modal h3 {
@@ -220,12 +224,12 @@ footer {
 .milestone-modal p {
     font-size: 1.2em;
     max-width: 500px;
-    margin-bottom: 30px;
+    margin: 0 auto 30px auto;
 }
 
 .milestone-modal .close-button {
-    padding: 10px 25px;
-    border-radius: 8px;
+    padding: 12px 30px;
+    border-radius: 50px;
     border: none;
     font-size: 1em;
     font-weight: bold;
@@ -251,61 +255,72 @@ footer {
     to { opacity: 1; }
 }
 
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
 @keyframes zoomIn {
     to { transform: scale(1); }
 }
 
-/* --- NEW: Estilos para Confeti y Fuegos Artificiales --- */
-.confetti-container {
+/* --- Estilos para Confeti y Fuegos Artificiales --- */
+.effects-container {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     overflow: hidden;
+    pointer-events: none;
+}
+
+.particle {
+    position: absolute;
+    opacity: 0;
     pointer-events: none;
 }
 
 .confetti {
-    position: absolute;
     width: 10px;
     height: 10px;
     background-color: #f00;
-    opacity: 0;
     animation: fall 3s linear forwards;
 }
 
 @keyframes fall {
-    0% { transform: translateY(-100px) rotateZ(0deg); opacity: 1; }
-    100% { transform: translateY(100vh) rotateZ(720deg); opacity: 0; }
-}
-
-.firework-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    pointer-events: none;
+    0% { transform: translateY(-20vh) rotateZ(0deg); opacity: 1; }
+    100% { transform: translateY(120vh) rotateZ(720deg); opacity: 0; }
 }
 
 .firework {
-    position: absolute;
     width: 4px;
     height: 4px;
     border-radius: 50%;
-    opacity: 1;
-    animation: firework-explode 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    animation: firework-trail 0.8s ease-out forwards;
+}
+
+@keyframes firework-trail {
+    0% { transform: scale(0.5) translateY(0); opacity: 1; }
+    50% { opacity: 1; }
+    100% { transform: scale(1.2) translateY(-200px); opacity: 0; }
+}
+
+.firework::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    opacity: 0;
+    animation: firework-explode 0.6s ease-out 0.8s forwards;
+    box-shadow: 0 0 0 0 #fff;
 }
 
 @keyframes firework-explode {
-    0% {
-        transform: scale(1);
-        opacity: 1;
-    }
-    100% {
-        transform: scale(25);
-        opacity: 0;
-    }
+    0% { opacity: 1; transform: translate(-50%, -50%) scale(0); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
 }
