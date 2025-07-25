@@ -10,7 +10,7 @@ body {
     background-color: #f5f5f5;
     color: #333;
     line-height: 1.4;
-    overflow-x: hidden; /* Evita el scroll horizontal causado por notificaciones */
+    overflow-x: hidden; /* Evita el scroll horizontal */
 }
 
 .container {
@@ -75,6 +75,10 @@ header h2 {
     border-right: none;
 }
 
+.year-label, .semester {
+    font-size: 0.9em;
+}
+
 .year-label {
     display: block;
     font-weight: bold;
@@ -89,7 +93,6 @@ header h2 {
 }
 
 .semester {
-    font-size: 0.9em;
     background-color: rgba(255,255,255,0.2);
     padding: 4px 8px;
     border-radius: 4px;
@@ -139,31 +142,19 @@ header h2 {
     background-color: #d4edda;
     border-color: #28a745;
     color: #155724;
-    position: relative;
 }
 
-.ramo.completado::before {
+.ramo.completado::before, .ramo.completado::after {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    top: 0; left: 0; right: 0; bottom: 0;
     background: linear-gradient(45deg, transparent 45%, #28a745 45%, #28a745 55%, transparent 55%);
     pointer-events: none;
     border-radius: 6px;
 }
 
 .ramo.completado::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
     background: linear-gradient(-45deg, transparent 45%, #28a745 45%, #28a745 55%, transparent 55%);
-    pointer-events: none;
-    border-radius: 6px;
 }
 
 footer {
@@ -184,52 +175,137 @@ footer {
     color: #a67c00;
 }
 
-/* --- NEW: Estilos para Notificaciones de Hitos --- */
-.milestone-notification {
+/* --- NEW: Estilos para Modal de Felicitación --- */
+.milestone-overlay {
     position: fixed;
-    top: 80px; /* Debajo de la notificación de progreso */
-    right: 20px;
-    color: white;
-    padding: 18px 25px;
-    border-radius: 10px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.25);
-    z-index: 999;
-    font-family: Arial, sans-serif;
-    font-size: 16px;
-    min-width: 300px;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    animation: fadeIn 0.3s forwards;
+}
+
+.milestone-modal {
+    padding: 40px;
+    border-radius: 15px;
     text-align: center;
-    animation: slideInAndBounce 0.5s ease-out, fadeOut 0.5s ease-in 4.5s forwards;
+    color: white;
+    position: relative;
+    transform: scale(0.7);
+    animation: zoomIn 0.5s 0.2s forwards cubic-bezier(0.18, 0.89, 0.32, 1.28);
 }
 
-.milestone-notification.semester {
-    background: linear-gradient(135deg, #007bff, #0056b3); /* Azul para semestre */
+.milestone-modal.semester {
+    background: linear-gradient(145deg, #007bff, #0056b3);
+    box-shadow: 0 10px 30px rgba(0, 123, 255, 0.5);
 }
 
-.milestone-notification.year {
-    background: linear-gradient(135deg, #ffc107, #d39e00); /* Dorado para año */
-    top: 150px; /* Más abajo para no superponerse */
-    animation: slideInAndBounce 0.5s ease-out 0.2s, fadeOut 0.5s ease-in 4.7s forwards; /* Delay para aparecer después */
-    animation-fill-mode: forwards;
+.milestone-modal.year {
+    background: linear-gradient(145deg, #ffc107, #d39e00);
+    box-shadow: 0 10px 30px rgba(255, 193, 7, 0.5);
 }
 
-.milestone-notification::before {
-    content: '🏆';
-    font-size: 24px;
-    display: block;
-    margin-bottom: 10px;
+.milestone-modal h3 {
+    font-size: 2.8em;
+    margin-bottom: 15px;
+    text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
 }
 
-.milestone-notification.year::before {
-    content: '👑'; /* Ícono diferente para año */
+.milestone-modal p {
+    font-size: 1.2em;
+    max-width: 500px;
+    margin-bottom: 30px;
 }
 
-@keyframes slideInAndBounce {
-    0% { transform: translateX(120%); opacity: 0; }
-    70% { transform: translateX(-10%); opacity: 1; }
-    100% { transform: translateX(0); opacity: 1; }
+.milestone-modal .close-button {
+    padding: 10px 25px;
+    border-radius: 8px;
+    border: none;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s;
 }
 
-@keyframes fadeOut {
-    from { opacity: 1; }
-    to { opacity: 0; transform: translateX(120%); }
+.milestone-modal.semester .close-button {
+    background-color: #fff;
+    color: #007bff;
+}
+
+.milestone-modal.year .close-button {
+    background-color: #fff;
+    color: #d39e00;
+}
+
+.milestone-modal .close-button:hover {
+    transform: scale(1.05);
+}
+
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
+
+@keyframes zoomIn {
+    to { transform: scale(1); }
+}
+
+/* --- NEW: Estilos para Confeti y Fuegos Artificiales --- */
+.confetti-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: #f00;
+    opacity: 0;
+    animation: fall 3s linear forwards;
+}
+
+@keyframes fall {
+    0% { transform: translateY(-100px) rotateZ(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotateZ(720deg); opacity: 0; }
+}
+
+.firework-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.firework {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    opacity: 1;
+    animation: firework-explode 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes firework-explode {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(25);
+        opacity: 0;
+    }
 }
