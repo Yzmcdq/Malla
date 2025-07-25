@@ -221,10 +221,12 @@ footer {
     text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
 }
 
+/* --- REGLA MODIFICADA --- */
 .milestone-modal p {
-    font-size: 1.2em;
+    font-size: 1.3em; /* Aumentado el tamaño de la fuente */
     max-width: 500px;
     margin: 0 auto 30px auto;
+    text-align: center; /* Centrado el texto */
 }
 
 .milestone-modal .close-button {
