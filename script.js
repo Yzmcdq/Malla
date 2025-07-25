@@ -3,10 +3,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // --- Mensajes de felicitación personalizados ---
     const semesterMessages = [
-        "¡Mi vida hermosa, superaste este semestre con todo tu brillo! Estoy tan orgulloso de ti, amor mío.",
-        "¡Felicidades, mi preciosa! Con tu esfuerzo y dulzura conquistaste este semestre.",
+        "¡Mi vida hermosa, superaste este semestre! Estoy tan orgulloso de ti, amor mío.",
+        "¡Felicidades, mi preciosa! Conquistaste este semestre.",
         "¡Lo lograste, mi niña hermosa! Cada ramo aprobado es un paso más para el futuro que sueñas.",
-        "¡Amor mío, impresionante! Tu constancia y amor por lo que haces brillaron este semestre.",
         "¡Adelante, belleza! Este semestre quedó atrás y tú sigues conquistando el mundo.",
         "¡Bien hecho, preciosa! Estás cada día más cerca de cumplir tus sueños.",
         "¡Misión cumplida, mi amor! Has demostrado tu fuerza y tu luz una vez más.",
@@ -20,12 +19,12 @@ document.addEventListener('DOMContentLoaded', function() {
         "¡Increíble, mi preciosa! Completaste un año entero con esa fuerza que amo en ti.",
         "¡Felicidades, mi niña hermosa! Este año fue de crecimiento, amor y sueños cumplidos.",
         "¡Dominaste el año, belleza mía! Tu dedicación te hace única. ¡Celebremos este logro!",
-        "¡Año completado, amor mío! Estás construyendo el futuro con esa luz que te rodea.",
-        "¡Qué gran avance, preciosa! Has superado un año de desafíos y brillas aún más.",
+        "¡Año completado, amor mío! Estás construyendo el futuro con esa belleza tuya.",
+        "¡Gran avance, preciosa! Has superado un año de desafíos y brillas aún más.",
         "¡Felicidades, mi vida! Un año más de aprendizajes que te acercan a tus sueños.",
-        "¡Un brindis por ti, amor mío! Cerraste este capítulo con fuerza y amor.",
+        "¡Un brindis por ti, amor mío! Cerraste este capítulo espectacularmente",
         "¡Lo hiciste otra vez, mi niña hermosa! Un año completo de logros y esfuerzo.",
-        "¡Amor mío, la toga está un año más cerca! Con tu pasión y dulzura, todo lo puedes lograr."
+        "¡Amor mío, Julianito está un año más cerca!"
     ];
 
     const ramos = document.querySelectorAll('.ramo');
